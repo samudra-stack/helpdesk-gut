@@ -1,0 +1,324 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+  --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+  --font-headline-lg: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+  --font-headline-md: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+  --font-headline-sm: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+  --font-title-md: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+  --font-body-lg: var(--font-inter), Inter, sans-serif;
+  --font-body-default: var(--font-inter), Inter, sans-serif;
+  --font-label-md: var(--font-inter), Inter, sans-serif;
+  --font-label-sm: var(--font-inter), Inter, sans-serif;
+  --font-button: var(--font-inter), Inter, sans-serif;
+  --font-caption: var(--font-inter), Inter, sans-serif;
+
+  --text-display: 48px;
+  --text-display--line-height: 1.2;
+  --text-display--font-weight: 700;
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 1.2;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-lg-mobile: 28px;
+  --text-headline-lg-mobile--line-height: 1.2;
+  --text-headline-lg-mobile--font-weight: 700;
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 1.3;
+  --text-headline-md--font-weight: 700;
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 1.4;
+  --text-headline-sm--font-weight: 600;
+  --text-title-md: 18px;
+  --text-title-md--line-height: 1.4;
+  --text-title-md--font-weight: 600;
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--font-weight: 400;
+  --text-body-default: 14px;
+  --text-body-default--line-height: 1.6;
+  --text-body-default--font-weight: 400;
+  --text-label-md: 14px;
+  --text-label-md--line-height: 1.2;
+  --text-label-md--font-weight: 500;
+  --text-label-sm: 13px;
+  --text-label-sm--line-height: 1.2;
+  --text-label-sm--font-weight: 500;
+  --text-button: 14px;
+  --text-button--line-height: 1;
+  --text-button--font-weight: 600;
+  --text-caption: 12px;
+  --text-caption--line-height: 1.4;
+  --text-caption--font-weight: 400;
+
+  --color-primary: #2563eb;
+  --color-primary-strong: #1d4ed8;
+  --color-background: #f4f7fb;
+  --color-surface: #ffffff;
+  --color-surface-container: #f8fafc;
+  --color-border-subtle: #e2e8f0;
+  --color-on-surface-variant: #475569;
+  --color-dark-navy: #0f172a;
+}
+
+@layer base {
+  :root {
+    --app-spacing-xs: 4px;
+    --app-spacing-sm: 8px;
+    --app-spacing-md: 16px;
+    --app-spacing-lg: 24px;
+    --app-spacing-xl: 32px;
+    --app-spacing-2xl: 48px;
+    --dashboard-sidebar-width: 280px;
+  }
+
+  html {
+    font-family: var(--font-inter), Inter, sans-serif;
+  }
+
+  body {
+    --font-display: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+    --font-headline-lg: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+    --font-headline-md: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+    --font-headline-sm: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+    --font-title-md: var(--font-plus-jakarta), "Plus Jakarta Sans", sans-serif;
+    --font-body-lg: var(--font-inter), Inter, sans-serif;
+    --font-body-default: var(--font-inter), Inter, sans-serif;
+    --font-label-md: var(--font-inter), Inter, sans-serif;
+    --font-label-sm: var(--font-inter), Inter, sans-serif;
+    --font-button: var(--font-inter), Inter, sans-serif;
+    --font-caption: var(--font-inter), Inter, sans-serif;
+    @apply bg-background font-body-default text-body-default text-slate-700 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display text-slate-900;
+  }
+
+  input,
+  select,
+  textarea,
+  table {
+    @apply font-body-default text-body-default;
+  }
+
+  button,
+  a {
+    @apply font-button;
+  }
+}
+
+@layer components {
+  .page-shell {
+    width: 100%;
+    max-width: var(--container-7xl);
+  }
+
+  .page-shell > :not(:last-child) {
+    margin-bottom: var(--app-spacing-lg);
+  }
+
+  .page-shell-form {
+    width: 100%;
+    max-width: var(--container-4xl);
+  }
+
+  .page-shell-form > :not(:last-child) {
+    margin-bottom: var(--app-spacing-lg);
+  }
+
+  .ticket-create-shell {
+    width: 100%;
+    max-width: 960px;
+    margin-inline: auto;
+  }
+
+  .dashboard-sidebar {
+    width: var(--dashboard-sidebar-width);
+  }
+
+  @media (min-width: 768px) {
+    .dashboard-main {
+      margin-left: var(--dashboard-sidebar-width);
+    }
+  }
+
+  .card-shell {
+    @apply overflow-hidden rounded-xl border border-border-subtle bg-surface shadow-sm;
+  }
+
+  .card-header {
+    padding: var(--app-spacing-lg);
+    @apply border-b border-border-subtle;
+  }
+
+  .card-body {
+    padding: var(--app-spacing-lg);
+  }
+
+  .form-label {
+    margin-bottom: var(--app-spacing-sm);
+    @apply block font-label-md text-label-md text-slate-700;
+  }
+
+  .form-control {
+    padding-inline: var(--app-spacing-md);
+    @apply w-full rounded-lg border border-slate-300 bg-white py-3 text-body-default text-slate-800 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500;
+  }
+
+  .helper-text {
+    margin-top: var(--app-spacing-xs);
+    @apply font-caption text-caption text-slate-500;
+  }
+
+  .btn {
+    gap: var(--app-spacing-sm);
+    padding-inline: var(--app-spacing-lg);
+    @apply inline-flex items-center justify-center rounded-lg py-3 font-button text-button transition disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-primary {
+    gap: var(--app-spacing-sm);
+    padding-inline: var(--app-spacing-lg);
+    @apply inline-flex items-center justify-center rounded-lg bg-primary py-3 font-button text-button text-white transition hover:bg-primary-strong disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-secondary {
+    gap: var(--app-spacing-sm);
+    padding-inline: var(--app-spacing-lg);
+    @apply inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white py-3 font-button text-button text-on-surface-variant transition hover:bg-surface-container disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-danger {
+    gap: var(--app-spacing-sm);
+    padding-inline: var(--app-spacing-lg);
+    @apply inline-flex items-center justify-center rounded-lg bg-red-500 py-3 font-button text-button text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-success {
+    gap: var(--app-spacing-sm);
+    padding-inline: var(--app-spacing-lg);
+    @apply inline-flex items-center justify-center rounded-lg bg-green-600 py-3 font-button text-button text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-sm {
+    padding: var(--app-spacing-sm) var(--app-spacing-md);
+  }
+
+  .alert-error {
+    margin-bottom: var(--app-spacing-lg);
+    padding-inline: var(--app-spacing-md);
+    @apply rounded-lg bg-red-50 py-3 font-body-default text-body-default text-red-700;
+  }
+
+  .alert-success {
+    margin-bottom: var(--app-spacing-lg);
+    padding-inline: var(--app-spacing-md);
+    @apply rounded-lg bg-green-50 py-3 font-body-default text-body-default text-green-700;
+  }
+
+  .table-head-row {
+    @apply border-b border-border-subtle bg-surface-container font-label-sm text-label-sm text-on-surface-variant;
+  }
+
+  .table-head-cell {
+    padding: var(--app-spacing-md);
+    @apply font-semibold;
+  }
+
+  .table-body-cell {
+    padding: var(--app-spacing-md);
+    @apply text-body-default;
+  }
+
+  .modal-card {
+    padding: var(--app-spacing-lg);
+    @apply w-full rounded-xl border border-border-subtle bg-white shadow-2xl;
+  }
+}
+
+@utility p-xs { padding: var(--app-spacing-xs); }
+@utility p-sm { padding: var(--app-spacing-sm); }
+@utility p-md { padding: var(--app-spacing-md); }
+@utility p-lg { padding: var(--app-spacing-lg); }
+@utility p-xl { padding: var(--app-spacing-xl); }
+@utility p-2xl { padding: var(--app-spacing-2xl); }
+
+@utility px-xs { padding-inline: var(--app-spacing-xs); }
+@utility px-sm { padding-inline: var(--app-spacing-sm); }
+@utility px-md { padding-inline: var(--app-spacing-md); }
+@utility px-lg { padding-inline: var(--app-spacing-lg); }
+@utility px-xl { padding-inline: var(--app-spacing-xl); }
+@utility px-2xl { padding-inline: var(--app-spacing-2xl); }
+
+@utility py-xs { padding-block: var(--app-spacing-xs); }
+@utility py-sm { padding-block: var(--app-spacing-sm); }
+@utility py-md { padding-block: var(--app-spacing-md); }
+@utility py-lg { padding-block: var(--app-spacing-lg); }
+@utility py-xl { padding-block: var(--app-spacing-xl); }
+@utility py-2xl { padding-block: var(--app-spacing-2xl); }
+
+@utility pt-sm { padding-top: var(--app-spacing-sm); }
+@utility pt-md { padding-top: var(--app-spacing-md); }
+@utility pt-lg { padding-top: var(--app-spacing-lg); }
+@utility pt-xl { padding-top: var(--app-spacing-xl); }
+@utility pb-lg { padding-bottom: var(--app-spacing-lg); }
+
+@utility mt-xs { margin-top: var(--app-spacing-xs); }
+@utility mt-sm { margin-top: var(--app-spacing-sm); }
+@utility mt-md { margin-top: var(--app-spacing-md); }
+@utility mt-lg { margin-top: var(--app-spacing-lg); }
+@utility mb-xs { margin-bottom: var(--app-spacing-xs); }
+@utility mb-sm { margin-bottom: var(--app-spacing-sm); }
+@utility mb-md { margin-bottom: var(--app-spacing-md); }
+@utility mb-lg { margin-bottom: var(--app-spacing-lg); }
+@utility mb-xl { margin-bottom: var(--app-spacing-xl); }
+@utility mr-md { margin-right: var(--app-spacing-md); }
+
+@utility gap-sm { gap: var(--app-spacing-sm); }
+@utility gap-md { gap: var(--app-spacing-md); }
+@utility gap-lg { gap: var(--app-spacing-lg); }
+
+@utility space-y-xs {
+  & > :not(:last-child) {
+    margin-bottom: var(--app-spacing-xs);
+  }
+}
+
+@utility space-y-sm {
+  & > :not(:last-child) {
+    margin-bottom: var(--app-spacing-sm);
+  }
+}
+
+@utility space-y-md {
+  & > :not(:last-child) {
+    margin-bottom: var(--app-spacing-md);
+  }
+}
+
+@utility space-y-lg {
+  & > :not(:last-child) {
+    margin-bottom: var(--app-spacing-lg);
+  }
+}
+
+@keyframes popup {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-popup {
+  animation: popup 0.3s ease-out forwards;
+}

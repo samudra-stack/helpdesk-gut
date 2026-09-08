@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Session Check</title>
+  </head>
+  <body>
+    <pre id="out"></pre>
+    <script>
+      document.getElementById("out").textContent = JSON.stringify(
+        {
+          access: Boolean(window.localStorage.getItem("access_token")),
+          refresh: Boolean(window.localStorage.getItem("refresh_token")),
+          user: window.localStorage.getItem("user"),
+        },
+        null,
+        2
+      );
+    </script>
+  </body>
+</html>

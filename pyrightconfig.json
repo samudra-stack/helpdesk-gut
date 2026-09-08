@@ -1,0 +1,15 @@
+{
+    "venvPath": "S:/project_helpdesk",
+    "venv": "env",
+    "include": [
+        "backend"
+    ],
+    "extraPaths": [
+        "S:/project_helpdesk/backend"
+    ],
+    "exclude": [
+        "env",
+        "frontend-helpdesk",
+        "**/__pycache__"
+    ]
+}
