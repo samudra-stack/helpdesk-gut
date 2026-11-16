@@ -1,0 +1,30 @@
+# Python / Django
+env/
+venv/
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+backend/db.sqlite3
+backend/staticfiles/
+backend/media/
+.env
+.env.*
+
+# Logs & local work files (jangan pernah commit ini lagi)
+report_work/
+*.log
+*.pid
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+!.env.example
+!backend/.env.example
+!frontend-helpdesk/.env.example
