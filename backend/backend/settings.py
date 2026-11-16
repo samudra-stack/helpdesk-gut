@@ -41,6 +41,12 @@ _render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 if _render_host and _render_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(_render_host)
 
+# Vercel: allow this project's *.vercel.app domains
+if os.environ.get("VERCEL"):
+    for _h in (".vercel.app", os.environ.get("VERCEL_URL"), os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")):
+        if _h and _h not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(_h)
+
 
 # Application definition
 
@@ -96,8 +102,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Without it, fall back to local SQLite so a fresh clone can run immediately.
 _database_url = os.environ.get("DATABASE_URL")
 if _database_url:
+    _conn_age = 0 if os.environ.get("VERCEL") else 600
     DATABASES = {
-        'default': dj_database_url.parse(_database_url, conn_max_age=600, ssl_require=True)
+        'default': dj_database_url.parse(_database_url, conn_max_age=_conn_age, ssl_require=True)
     }
 else:
     DATABASES = {
@@ -148,6 +155,11 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
+# On Vercel there is no collectstatic step, so serve static files via finders
+if os.environ.get("VERCEL"):
+    STORAGES["staticfiles"] = {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"}
+    WHITENOISE_USE_FINDERS = True
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

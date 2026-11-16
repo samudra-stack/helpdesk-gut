@@ -299,3 +299,75 @@ def change_password(request):
         "is_staff": role in ["it_staff", "administrator"],
         "is_superuser": user.is_superuser,
     })
+
+
+
+# ---------------------------------------------------------------------------
+# One-time setup for serverless deploys (Vercel), where no shell/migrate
+# step exists. Active ONLY while the SETUP_TOKEN environment variable is
+# set on the host. After setup, remove SETUP_TOKEN and this endpoint
+# returns 404. Passwords come from SEED_*_PASSWORD env vars, never code.
+# ---------------------------------------------------------------------------
+from django.views.decorators.csrf import csrf_exempt as _csrf_exempt
+
+
+@_csrf_exempt
+def one_time_setup(request):
+    import os
+    import secrets as _secrets
+
+    from django.contrib.auth.models import Group, User
+    from django.core.management import call_command
+    from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound
+
+    setup_token = os.environ.get("SETUP_TOKEN", "")
+    if not setup_token:
+        return HttpResponseNotFound("setup disabled")
+
+    if request.method == "GET":
+        return HttpResponse(
+            "<!doctype html><title>Helpdesk setup</title>"
+            "<form method='post' style='font-family:sans-serif;margin:40px'>"
+            "<h3>One-time setup</h3>"
+            "<input type='password' name='token' placeholder='SETUP_TOKEN' "
+            "style='padding:8px;width:320px'> "
+            "<button type='submit' style='padding:8px 16px'>Run migrate + seed</button>"
+            "</form>",
+            content_type="text/html",
+        )
+
+    supplied = request.POST.get("token", "") or request.headers.get("X-Setup-Token", "")
+    if not _secrets.compare_digest(supplied, setup_token):
+        return HttpResponseForbidden("wrong token")
+
+    lines = []
+    call_command("migrate", interactive=False, verbosity=0)
+    lines.append("migrate: OK")
+
+    specs = [
+        ("SEED_ADMIN", "administrator", "administrator", True),
+        ("SEED_IT", "it_support", "it_staff", False),
+        ("SEED_USER", "user_demo", None, False),
+    ]
+    for prefix, default_username, group_name, is_super in specs:
+        password = os.environ.get(f"{prefix}_PASSWORD")
+        if not password:
+            lines.append(f"{prefix}: skipped (env not set)")
+            continue
+        username = os.environ.get(f"{prefix}_USERNAME", default_username)
+        if User.objects.filter(username=username).exists():
+            lines.append(f"{username}: already exists, skipped")
+            continue
+        user = User.objects.create_user(username=username, password=password)
+        if is_super:
+            user.is_staff = True
+            user.is_superuser = True
+            user.save(update_fields=["is_staff", "is_superuser"])
+        if group_name:
+            group, _ = Group.objects.get_or_create(name=group_name)
+            user.groups.add(group)
+        UserProfile.objects.get_or_create(user=user)
+        lines.append(f"{username}: created (group={group_name or 'requester'})")
+
+    lines.append("DONE. Remove SETUP_TOKEN from the host env vars now.")
+    return HttpResponse("\n".join(lines), content_type="text/plain")

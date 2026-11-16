@@ -1,51 +1,47 @@
-# Panduan Deploy Helpdesk GUT (Vercel + Render + Neon)
+# Panduan Deploy helpdesk-gut
 
-Arsitektur:
-- Frontend Next.js di Vercel, Root Directory: frontend-helpdesk
-- Backend Django di Render, memakai render.yaml di root repo
-- Database PostgreSQL di Neon (gratis), alamatnya dipasang sebagai DATABASE_URL di Render
+Arsitektur production saat ini:
 
-## Urutan deploy
+- Frontend Next.js: Vercel, project terpisah, Root Directory `frontend-helpdesk`
+- Backend Django: Vercel, project terpisah, Root Directory `backend` (serverless Python memakai `backend/vercel.json`)
+- Database PostgreSQL: Neon (pakai connection string POOLED untuk backend serverless)
 
-1. Push folder ini ke GitHub sebagai isi baru repo helpdesk-gut.
-   File sensitif lama (report_work, env, db.sqlite3, media lama) memang
-   sengaja tidak ada di paket ini dan sudah masuk .gitignore.
+Catatan: rencana awal memakai Render untuk backend, tetapi Render mewajibkan
+kartu kredit untuk verifikasi identitas workspace, jadi backend dipindah ke
+Vercel. File `render.yaml` masih ada di repo sebagai cadangan bila suatu saat
+ingin kembali ke Render.
 
-2. Buat database di neon.tech:
-   - Sign in dengan GitHub, buat project baru, salin connection string-nya.
-   - Connection string itu nilai untuk DATABASE_URL di langkah 3.
+## Environment variable backend (project Vercel backend)
 
-3. Deploy backend di render.com:
-   - New, lalu Blueprint, pilih repo helpdesk-gut, Render membaca render.yaml.
-   - Isi env yang bertanda sync false:
-     DATABASE_URL = connection string dari Neon
-     CORS_ALLOWED_ORIGINS = https://NAMA-PROJECT.vercel.app (isi setelah langkah 4 tahu URL-nya, lalu update)
-     CSRF_TRUSTED_ORIGINS = sama dengan CORS_ALLOWED_ORIGINS
-   - Tunggu build selesai sampai status Live. URL backend bentuknya
-     https://helpdesk-gut-backend.onrender.com
+- `DATABASE_URL`: connection string pooled dari Neon
+- `DJANGO_SECRET_KEY`: string acak panjang, jangan pakai ulang secret lama
+- `DJANGO_DEBUG`: `False`
+- `DJANGO_ALLOWED_HOSTS`: `.vercel.app`
+- `CORS_ALLOWED_ORIGINS`: URL production frontend, contoh `https://helpdesk-gut.vercel.app`
+- `CSRF_TRUSTED_ORIGINS`: sama dengan CORS di atas
+- `SEED_ADMIN_PASSWORD`, `SEED_IT_PASSWORD`, `SEED_USER_PASSWORD`: password awal 3 akun
+- `SETUP_TOKEN`: token acak sekali pakai untuk endpoint setup (hapus setelah setup selesai)
 
-4. Deploy frontend di vercel.com:
-   - Add New Project, import repo helpdesk-gut.
-   - Root Directory: frontend-helpdesk
-   - Environment Variables:
-     NEXT_PUBLIC_API_BASE_URL = https://helpdesk-gut-backend.onrender.com
-     BACKEND_API_BASE_URL = https://helpdesk-gut-backend.onrender.com
-   - Deploy. Salin URL Vercel-nya, lalu kembali ke langkah 3 untuk
-     mengisi CORS dan CSRF di Render, setelah itu Render akan restart sendiri.
+## Membuat tabel dan akun awal (sekali saja)
 
-5. Buat akun awal (3 role) dari Render Shell backend:
-   - Buka service backend di Render, tab Shell, jalankan:
-     SEED_ADMIN_PASSWORD='password-admin-pilihan-sendiri' SEED_IT_PASSWORD='password-it-pilihan-sendiri' SEED_USER_PASSWORD='password-user-pilihan-sendiri' python seed_users.py
-   - Hasilnya 3 akun: administrator (akses penuh), it_support (tim IT,
-     ambil dan assign tiket), user_demo (requester, bikin tiket).
-   - Password ditentukan sendiri saat menjalankan perintah itu dan tidak
-     tersimpan di repo mana pun.
+Di serverless tidak ada langkah migrate saat build, jadi setelah backend
+pertama kali deploy:
 
-## Catatan
+1. Buka `https://<url-backend>/api/__setup__/`
+2. Isi SETUP_TOKEN, klik tombolnya. Endpoint ini menjalankan migrate dan
+   membuat 3 akun dari env SEED di atas.
+3. Hapus env `SETUP_TOKEN` di Vercel lalu redeploy. Setelah itu endpoint
+   setup membalas 404 dan tidak bisa dipakai lagi.
 
-- Render free akan tidur setelah idle, login pertama bisa lambat sekitar 1 menit.
-- File attachment tiket tersimpan di disk backend. Di Render free disk ini
-  tidak permanen, jadi attachment bisa hilang saat service restart.
-  Untuk pemakaian serius, attachment perlu dipindah ke storage terpisah
-  (misalnya Supabase Storage atau Cloudinary) sebagai langkah berikutnya.
-- Jangan pernah commit file .env, folder env, report_work, atau db.sqlite3.
+## Environment variable frontend (project Vercel frontend)
+
+- `NEXT_PUBLIC_API_BASE_URL`: URL backend, contoh `https://helpdesk-gut-backend.vercel.app`
+- `BACKEND_API_BASE_URL`: sama dengan di atas
+
+## Batasan plan gratis
+
+- Backend serverless bisa mengalami cold start beberapa detik.
+- File attachment tiket tersimpan di filesystem sementara dan tidak
+  persisten di serverless. Untuk lampiran yang awet, pindahkan media ke
+  object storage di langkah berikutnya.
+- Password awal wajib diganti setelah login pertama.

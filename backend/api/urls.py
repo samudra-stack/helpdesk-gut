@@ -8,6 +8,7 @@ from .views import (
     get_it_staff_users,
     get_user_info,
     manage_users,
+    one_time_setup,
     remove_user,
     reset_user_password,
 )
@@ -24,4 +25,5 @@ urlpatterns = [
     path("users/<int:user_id>/", remove_user, name="remove-user"),
     path("users/<int:user_id>/reset-password/", reset_user_password, name="reset-user-password"),
     path("change-password/", change_password, name="change-password"),
+    path("__setup__/", one_time_setup, name="one-time-setup"),
 ]
